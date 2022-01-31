@@ -1,7 +1,6 @@
 package fr.epsi.MSPR.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Salarie {
     private String Nom;

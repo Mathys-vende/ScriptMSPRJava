@@ -3,10 +3,16 @@ package fr.epsi.MSPR;
 import fr.epsi.MSPR.models.Equipement;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
     private static String StaffPath = "src/fr/epsi/MSPR/staff.txt";
@@ -15,6 +21,7 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<String> ListStaff = ListStaff();
         ArrayList<Equipement> ListEquipement = ListEquipement();
+        CreateHtmlFile(ListStaff);
     }
 
     public static ArrayList<Equipement> ListEquipement(){
@@ -48,5 +55,27 @@ public class Main {
             e.printStackTrace();
         }
         return content;
+    }
+    public static void CreateHtmlFile(ArrayList<String> listAgents){
+        for (String agent: listAgents) {
+            ArrayList<String> InfoSalarie = getContentTxtFile("src/fr/epsi/MSPR/ListAgents/"+agent+".txt");
+            File file = new File("src/fr/epsi/MSPR/template.html");
+            try {
+                Files.copy(file.toPath(),new File("src/fr/epsi/MSPR/htmlAgents/"+ agent+".html").toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String nom = InfoSalarie.get(0)+" "+InfoSalarie.get(1);
+            try {
+                Path path = Paths.get("src/fr/epsi/MSPR/htmlAgents/"+ agent+".html");
+                Stream<String> lines = Files.lines(path);
+                List<String> replaced = lines.map(line -> line.replaceAll("nom", nom).replaceAll("test",InfoSalarie.get(2))).collect(Collectors.toList());
+                Files.write(path, replaced);
+                lines.close();
+                System.out.println("Find and Replace done!!!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
