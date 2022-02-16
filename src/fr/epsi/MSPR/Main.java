@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,13 +17,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    private final static String StaffPath = "ressources/staff.txt";
-    private final static String EquipementPath = "ressources/liste.txt";
-    private final static String OutPutDirectory = "ressources/";
-    private final static String AgentsTxtDirectory = "ressources/ListAgents/";
-    private final static String AgentsPhotoDirectory = "ressources/ListPhotosAgents/";
+    private final static String StaffPath = "../ressources/staff.txt";
+    private final static String EquipementPath = "../ressources/liste.txt";
+    private final static String OutPutDirectory = "../ressources/";
+    private final static String AgentsTxtDirectory = "../ressources/ListAgents/";
+    private final static String AgentsPhotoDirectory = "../ressources/ListPhotosAgents/";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ArrayList<String> ListStaffUncheck = ListStaff();
         String[] ListPhoto = ListPhotos();
         ArrayList<String> ListStaff = CheckIfStaffHasPhoto(ListStaffUncheck, ListPhoto);
@@ -90,7 +89,7 @@ public class Main {
     public static void CreateHtmlFile(ArrayList<String> listAgents){
         for (String agent: listAgents) {
             String[] InfoSalarie = getContentTxtFile(AgentsTxtDirectory + agent + ".txt").toArray(new String[0]);
-            File file = new File("ressources/template.html");
+            File file = new File("../ressources/template.html");
             try {
                 Files.copy(file.toPath(),new File(OutPutDirectory+ agent+".html").toPath());
             } catch (IOException e) {
