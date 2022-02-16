@@ -6,27 +6,55 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    private static String StaffPath = "src/fr/epsi/MSPR/staff.txt";
-    private static String EquipementPath = "src/fr/epsi/MSPR/liste.txt";
-    private static String OutPutDirectory = "src/fr/epsi/MSPR/htmlAgents/";
-    private static String AgentsTxtDirectory = "src/epsi/MSPR/ListAgents/";
+    private final static String StaffPath = "ressources/staff.txt";
+    private final static String EquipementPath = "ressources/liste.txt";
+    private final static String OutPutDirectory = "ressources/";
+    private final static String AgentsTxtDirectory = "ressources/ListAgents/";
+    private final static String AgentsPhotoDirectory = "ressources/ListPhotosAgents/";
 
     public static void main(String[] args) {
-        ArrayList<String> ListStaff = ListStaff();
+        ArrayList<String> ListStaffUncheck = ListStaff();
+        String[] ListPhoto = ListPhotos();
+        ArrayList<String> ListStaff = CheckIfStaffHasPhoto(ListStaffUncheck, ListPhoto);
         ArrayList<Equipement> ListEquipement = ListEquipement();
+
+
         CreateHtmlFile(ListStaff);
     }
 
+    public static ArrayList<String> CheckIfStaffHasPhoto(ArrayList<String> ListStaff, String[] photoStaff)
+    {
+        ArrayList<String> photoName = new ArrayList<>();
+        for(String photo : photoStaff){
+            String[] photoSplit = photo.split("\\.");
+            photoName.add(photoSplit[0]);
+        }
+        for(Iterator<String> itr = ListStaff.iterator();
+        itr.hasNext();){
+            String agent = itr.next();
+            String[] agentSplit = agent.split("\\.");
+            if(!photoName.contains(agentSplit[0])){
+                itr.remove();
+            }
+        }
+        return ListStaff;
+    }
+    public static String[] ListPhotos(){
+        File f = new File(AgentsPhotoDirectory);
+        return f.list();
+    }
     public static ArrayList<Equipement> ListEquipement(){
         ArrayList<String> ListEquipementString = getContentTxtFile(EquipementPath);
         ArrayList<Equipement> ListEquipement = new ArrayList<Equipement>();
@@ -62,7 +90,7 @@ public class Main {
     public static void CreateHtmlFile(ArrayList<String> listAgents){
         for (String agent: listAgents) {
             String[] InfoSalarie = getContentTxtFile(AgentsTxtDirectory + agent + ".txt").toArray(new String[0]);
-            File file = new File("src/fr/epsi/MSPR/template.html");
+            File file = new File("ressources/template.html");
             try {
                 Files.copy(file.toPath(),new File(OutPutDirectory+ agent+".html").toPath());
             } catch (IOException e) {
