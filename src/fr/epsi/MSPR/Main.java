@@ -27,10 +27,10 @@ public class Main {
         ArrayList<String> ListStaffUncheck = ListStaff();
         String[] ListPhoto = ListPhotos();
         ArrayList<String> ListStaff = CheckIfStaffHasPhoto(ListStaffUncheck, ListPhoto);
-        ArrayList<Equipement> ListEquipement = ListEquipement();
+        ArrayList<String> ListEquipement = ListEquipement();
 
 
-        CreateHtmlFile(ListStaff);
+        CreateHtmlFile(ListStaff, ListEquipement);
     }
 
     public static ArrayList<String> CheckIfStaffHasPhoto(ArrayList<String> ListStaff, String[] photoStaff)
@@ -46,6 +46,13 @@ public class Main {
             String[] agentSplit = agent.split("\\.");
             if(!photoName.contains(agentSplit[0])){
                 itr.remove();
+            }else{
+                File file = new File(AgentsPhotoDirectory+agent+".jpg");
+                try {
+                    Files.copy(file.toPath(),new File(OutPutDirectory+"photos/"+agent+".jpg").toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return ListStaff;
@@ -54,15 +61,17 @@ public class Main {
         File f = new File(AgentsPhotoDirectory);
         return f.list();
     }
-    public static ArrayList<Equipement> ListEquipement(){
+    public static ArrayList<String> ListEquipement(){
         ArrayList<String> ListEquipementString = getContentTxtFile(EquipementPath);
         ArrayList<Equipement> ListEquipement = new ArrayList<Equipement>();
+        ArrayList<String> ListEquip = new ArrayList<>();
         for(String line: ListEquipementString){
             String[] items = line.split("\t");
             Equipement equipement =  new Equipement(items[0], items[1]);
             ListEquipement.add(equipement);
+            ListEquip.add(items[0]);
         }
-        return ListEquipement;
+        return ListEquip;
     }
     public static ArrayList<String> ListStaff(){
         ArrayList<String> StaffList = getContentTxtFile(StaffPath);
@@ -86,56 +95,44 @@ public class Main {
         }
         return content;
     }
-    public static void CreateHtmlFile(ArrayList<String> listAgents){
+    public static void CreateHtmlFile(ArrayList<String> listAgents, ArrayList<String> listEquipements){
         for (String agent: listAgents) {
             String[] InfoSalarie = getContentTxtFile(AgentsTxtDirectory + agent + ".txt").toArray(new String[0]);
             File file = new File("../ressources/template.html");
             try {
-                Files.copy(file.toPath(),new File(OutPutDirectory+ agent+".html").toPath());
+                Files.copy(file.toPath(),new File(OutPutDirectory+"agents/"+ agent+".html").toPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
             String nom = InfoSalarie[0]+" "+InfoSalarie[1];
             String mission = InfoSalarie[2];
-            String photo = "ListPhotosAgents"+agent+".jpg";
-            String mousqueton;
-            if(Arrays.toString(InfoSalarie).contains("mousqueton")) mousqueton = "checked"; else mousqueton="";
-            String gant;
-            if(Arrays.toString(InfoSalarie).contains("gant")) gant = "checked"; else gant ="";
-            String brassard;
-            if(Arrays.toString(InfoSalarie).contains("brassard")) brassard = "checked"; else brassard = "";
-            String menottes;
-            if(Arrays.toString(InfoSalarie).contains("menotttes")) menottes = "checked"; else menottes = "";
-            String cyno;
-            if(Arrays.toString(InfoSalarie).contains("cyno")) cyno = "checked"; else cyno = "";
-            String talky;
-            if(Arrays.toString(InfoSalarie).contains("talky")) talky = "checked"; else talky = "";
-            String lampe;
-            if(Arrays.toString(InfoSalarie).contains("lampe")) lampe = "checked"; else lampe = "";
-            String kit;
-            if(Arrays.toString(InfoSalarie).contains("kit")) kit = "checked";else kit = "";
-            String taser;
-            if(Arrays.toString(InfoSalarie).contains("taser")) taser = "checked"; else taser = "";
-            String lacrymo;
-            if(Arrays.toString(InfoSalarie).contains("lacrymo")) lacrymo = "checked";else lacrymo = "";
-
+            String photo = "../photos/"+agent+".jpg";
+            String Equipements = "";
+            for( String equipement : listEquipements){
+                Equipements = Equipements.concat(
+                        "<div class=\"col-md-6 col-lg-4 mb-5\">\n" +
+                        "        <div class=\"mx-auto\">\n" +
+                        "          <div class=\"card text-center\">\n" +
+                        "            <div class=\"card-header\">\n" +
+                        "            </div>\n" +
+                        "            <div class=\"card-body\"  id=\"card-body\">\n" +
+                        "              <h5 class=\"card-title\">"+equipement+"</h5>\n" +
+                        "            </div>\n" +
+                        "            <div class=\"card-footer\">\n" +
+                        "            </div>\n" +
+                        "          </div>\n" +
+                        "        </div>\n" +
+                        "      </div>");
+            }
             try {
-                Path path = Paths.get(OutPutDirectory+ agent+".html");
+                Path path = Paths.get(OutPutDirectory+"agents/"+ agent+".html");
                 Stream<String> lines = Files.lines(path);
+                String finalEquipements = Equipements;
                 List<String> replaced = lines.map(line -> line
                         .replaceAll("\\$photo", photo)
                         .replaceAll("\\$nom", nom)
                         .replaceAll("\\$mission",mission)
-                        .replaceAll("\\$mousqueton", mousqueton)
-                        .replaceAll("\\$gant", gant)
-                        .replaceAll("\\$brassard", brassard)
-                        .replaceAll("\\$menottes", menottes)
-                        .replaceAll("\\$cyno", cyno)
-                        .replaceAll("\\$talky", talky)
-                        .replaceAll("\\$lampe",lampe)
-                        .replaceAll("\\$kit",kit)
-                        .replaceAll("\\$taser",taser)
-                        .replaceAll("\\$lacrymo",lacrymo)
+                        .replaceAll("\\$objet", finalEquipements)
                 ).collect(Collectors.toList());
                 Files.write(path, replaced);
                 lines.close();
