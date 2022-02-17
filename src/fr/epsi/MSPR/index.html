@@ -27,7 +27,7 @@
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#header">Fiche-client</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#objet">Objets</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Search</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="navigation.html">Search</a></li>
                     </ul>
                 </div>
             </div>
@@ -36,8 +36,8 @@
         <header class="client text-white text-center" id="header">
             <div class="container d-flex align-items-center flex-column">
                 <img class="client-avatar mb-5" src="" alt="{{Image John Doe}}" />
-                <h1 class="client-heading mb-0">{{Nom}} {{Prenom}}</h1>
-                <p class="client-subheading font-weight-light mb-0">{{Profession}}</p>
+                <h1 class="client-heading mb-0">$nom</h1>
+                <p class="client-subheading font-weight-light mb-0">$mission</p>
             </div>
         </header>
         <!-- Fiche-Client Section-->
@@ -57,7 +57,7 @@
                                     Sécurité
                                 </div>
                                 <div class="card-body"  id="card-body">
-                                    <h5 class="card-title">{{Objet}}</h5>
+                                    <h5 class="card-title">$objet</h5>
                                 </div>
                                 <div class="card-footer">
                                     Sécurité
@@ -70,8 +70,12 @@
             </div>
         </section>
         <!-- Copyright-->
-        <div class="copyright py-4 text-center text-white">
-            <div class="container"><small>Copyright &copy; MSPR Java QYMEE 2022</small></div>
-        </div>
+        <footer id="footer">
+            <div class="copyright py-4 text-center text-white">
+                <div class="container">
+                    <small>Copyright &copy; MSPR Java QYMEE 2022</small>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>
