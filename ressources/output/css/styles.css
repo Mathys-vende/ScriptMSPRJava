@@ -1,48 +1,59 @@
+#page-top{
+  font-family: Roboto, sans-serif;
+}
+
 #header{
-    background-color: #379EC1;
+  background-color: #379EC1;
 }
 
 #card-body{
-    color: #fff;
-    background-color: #659224;
+  color: #fff;
+  background-color: #659224;
 }
 
 #mainNav {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    background-color: #000000;
-    font-family: Roboto, sans-serif;
-    font-weight: 700;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #000000;
+  font-weight: 700;
 }
 #mainNav .navbar-brand {
-    color: #fff;
+  color: #fff;
 }
 #mainNav .navbar-nav li.nav-item a.nav-link {
-    color: #fff;
+  color: #fff;
 }
 #mainNav .navbar-nav li.nav-item a.nav-link:hover {
-    color: #659224;
+  color: #659224;
 }
 #mainNav .navbar-toggler {
-    font-size: 80%;
-    padding: 0.8rem;
+  font-size: 80%;
+  padding: 0.8rem;
 }
 
 .client {
-    padding-top: calc(6rem + 74px);
-    padding-bottom: 6rem;
+  padding-top: calc(6rem + 74px);
+  padding-bottom: 6rem;
 }
 .client .client-heading {
-    font-size: 2.75rem;
-    line-height: 2.75rem;
+  font-size: 2.75rem;
+  line-height: 2.75rem;
 }
 .client .client-subheading {
-    font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 .client .client-avatar {
-    width: 15rem;
+  width: 15rem;
 }
 
 .copyright {
-    background-color: #000000;
+  background-color: #000000;
+}
+
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;            /* Footer height */
 }

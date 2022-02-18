@@ -10,18 +10,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    private final static String StaffPath = "../ressources/staff.txt";
-    private final static String EquipementPath = "../ressources/liste.txt";
-    private final static String OutPutDirectory = "../ressources/output/";
-    private final static String AgentsTxtDirectory = "../ressources/ListAgents/";
-    private final static String AgentsPhotoDirectory = "../ressources/ListPhotosAgents/";
+    private final static String StaffPath = "ressources/staff.txt";
+    private final static String EquipementPath = "ressources/liste.txt";
+    private final static String OutPutDirectory = "ressources/output/";
+    private final static String AgentsTxtDirectory = "ressources/ListAgents/";
+    private final static String AgentsPhotoDirectory = "ressources/ListPhotosAgents/";
 
     public static void main(String[] args) throws IOException {
         ArrayList<String> ListStaffUncheck = ListStaff();
@@ -30,7 +29,49 @@ public class Main {
         ArrayList<String> ListEquipement = ListEquipement();
 
 
-        CreateHtmlFile(ListStaff, ListEquipement);
+        ArrayList<String> ListAgentHTML = CreateHtmlFile(ListStaff, ListEquipement);
+        CreateHtmlIndex(ListAgentHTML);
+    }
+    public static void CreateHtmlIndex(ArrayList<String> ListAgentHTML) {
+            File file = new File("ressources/index-navigation-template.html");
+            try {
+                Files.copy(file.toPath(), new File(OutPutDirectory +"index.html").toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String ListHTMLAgents = "";
+            for(String fileName: ListAgentHTML){
+                ListHTMLAgents = ListHTMLAgents.concat(
+                        "<div class=\"col-md-6 col-lg-4 mb-5 client-search\">\n" +
+                        "            <div class=\"mx-auto\">\n" +
+                        "                <div class=\"card text-center\">\n" +
+                        "                    <div class=\"card-header\">\n" +
+                        "                        &nbsp\n" +
+                        "                    </div>\n" +
+                        "                    <div class=\"card-body\" id=\"card-body\">\n" +
+                        "                        <h5 id=\"name\" class=\"card-title\">"+fileName+"</h5>\n" +
+                        "                        <a href=\""+"agents/"+fileName+".html\" class=\"btn btn-primary\" id=\"header\">Allez à la fiche client</a>\n" +
+                        "                    </div>\n" +
+                        "                    <div class=\"card-footer\">\n" +
+                        "                        &nbsp\n" +
+                        "                    </div>\n" +
+                        "                </div>\n" +
+                        "            </div>\n" +
+                        "        </div>"
+                );
+            }
+            try {
+            Path path = Paths.get(OutPutDirectory+"index.html");
+            Stream<String> lines = Files.lines(path);
+            String finalListHTMLAgents = ListHTMLAgents;
+            List<String> replaced = lines.map(line -> line
+                    .replaceAll("\\$objet", finalListHTMLAgents)
+            ).collect(Collectors.toList());
+            Files.write(path, replaced);
+            lines.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static ArrayList<String> CheckIfStaffHasPhoto(ArrayList<String> ListStaff, String[] photoStaff)
@@ -47,7 +88,7 @@ public class Main {
             if(!photoName.contains(agentSplit[0])){
                 itr.remove();
             }else{
-                File file = new File(AgentsPhotoDirectory+agent+".jpg");
+                    File file = new File(AgentsPhotoDirectory+agent+".jpg");
                 try {
                     Files.copy(file.toPath(),new File(OutPutDirectory+"photos/"+agent+".jpg").toPath());
                 } catch (IOException e) {
@@ -95,10 +136,11 @@ public class Main {
         }
         return content;
     }
-    public static void CreateHtmlFile(ArrayList<String> listAgents, ArrayList<String> listEquipements){
+    public static ArrayList<String> CreateHtmlFile(ArrayList<String> listAgents, ArrayList<String> listEquipements){
+        ArrayList<String> listAgentHasHTML = new ArrayList<>();
         for (String agent: listAgents) {
             String[] InfoSalarie = getContentTxtFile(AgentsTxtDirectory + agent + ".txt").toArray(new String[0]);
-            File file = new File("../ressources/template.html");
+            File file = new File("ressources/template.html");
             try {
                 Files.copy(file.toPath(),new File(OutPutDirectory+"agents/"+ agent+".html").toPath());
             } catch (IOException e) {
@@ -108,21 +150,23 @@ public class Main {
             String mission = InfoSalarie[2];
             String photo = "../photos/"+agent+".jpg";
             String Equipements = "";
-            for( String equipement : listEquipements){
+            for( int x = 5; x <InfoSalarie.length; x++){
                 Equipements = Equipements.concat(
                         "<div class=\"col-md-6 col-lg-4 mb-5\">\n" +
-                        "        <div class=\"mx-auto\">\n" +
-                        "          <div class=\"card text-center\">\n" +
-                        "            <div class=\"card-header\">\n" +
-                        "            </div>\n" +
-                        "            <div class=\"card-body\"  id=\"card-body\">\n" +
-                        "              <h5 class=\"card-title\">"+equipement+"</h5>\n" +
-                        "            </div>\n" +
-                        "            <div class=\"card-footer\">\n" +
-                        "            </div>\n" +
-                        "          </div>\n" +
-                        "        </div>\n" +
-                        "      </div>");
+                        "                        <div class=\"mx-auto\">\n" +
+                        "                            <div class=\"card text-center\">\n" +
+                        "                                <div class=\"card-header\">\n" +
+                        "                                    &nbsp\n" +
+                        "                                </div>\n" +
+                        "                                <div class=\"card-body\"  id=\"card-body\">\n" +
+                        "                                    <h5 class=\"card-title\">"+ InfoSalarie[x] +"</h5>\n" +
+                        "                                </div>\n" +
+                        "                                <div class=\"card-footer\">\n" +
+                        "                                    &nbsp\n" +
+                        "                                </div>\n" +
+                        "                            </div>\n" +
+                        "                        </div>\n" +
+                        "                    </div>");
             }
             try {
                 Path path = Paths.get(OutPutDirectory+"agents/"+ agent+".html");
@@ -136,9 +180,11 @@ public class Main {
                 ).collect(Collectors.toList());
                 Files.write(path, replaced);
                 lines.close();
+                listAgentHasHTML.add(agent);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        return listAgentHasHTML;
     }
 }
